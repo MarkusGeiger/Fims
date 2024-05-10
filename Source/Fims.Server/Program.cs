@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Fims.Server.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,26 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+// ### AutoMigrate Begin
+app.Logger.LogInformation("Starting up. " +
+                          $"Working directory: '{Directory.GetCurrentDirectory()}', " +
+                          $"Base directory: '{AppContext.BaseDirectory}', " +
+                          $"Connection string: '{connectionString}'");
+var match = Regex.Match(connectionString, "^DataSource=(?<dbSource>.*);.*$");
+var dbPath = match.Groups["dbSource"].Value;
+app.Logger.LogInformation($"Before Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");
+
+// Do the database migrations on startup
+using(var scope = app.Services.CreateScope()){
+  var db = scope.ServiceProvider.GetService<ApplicationDbContext>();
+  if (db != null)
+  {
+    await db.Database.MigrateAsync();
+  }
+}
+app.Logger.LogInformation($"After Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");
+// ### AutoMigrate Done
+
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
