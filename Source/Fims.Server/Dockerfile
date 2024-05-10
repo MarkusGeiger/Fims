@@ -30,4 +30,5 @@ RUN dotnet publish "./Fims.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN mkdir /app/config
 ENTRYPOINT ["dotnet", "Fims.Server.dll"]
