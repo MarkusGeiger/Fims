@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface ErrorResponse {
+  title: string;
+  status: string;
+  detail: string;
+}
 function Login() {
     // state variables for email and passwords
     const [email, setEmail] = useState<string>("");
@@ -57,9 +62,16 @@ function Login() {
                         setError("Successful Login.");
                         window.location.href = '/';
                     }
-                    else
-                        setError("Error Logging In.");
+                    else {
+                      return data.json() as Promise<ErrorResponse>;
+                    }
 
+                })
+                .then((result) => {
+                  if(result) {
+                    setError(`${result.title}\n${result.detail??""}`);
+                    console.log("Result: ", result);
+                  }
                 })
                 .catch((error) => {
                     // handle network error

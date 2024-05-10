@@ -1,6 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface ErrorResponse {
+  title: string;
+  status: string;
+  errors: {
+    PasswordRequiresDigit: string[] | null;
+    PasswordRequiresNonAlphanumeric: string[] | null;
+    PasswordRequiresUpper: string[] | null;
+    PasswordTooShort: string[] | null;
+    DuplicateUserName: string[] | null;
+  }
+}
 
 function Register() {
     // state variables for email and passwords
@@ -53,11 +64,18 @@ function Register() {
                 .then((data) => {
                     // handle success or error from the server
                     console.log(data);
-                    if (data.ok)
+                    if (data.ok) {
                         setError("Successful register.");
-                    else
-                        setError("Error registering.");
-
+                    }
+                    else {
+                      return data.json() as Promise<ErrorResponse>;
+                    }
+                })
+                .then((result) => {
+                  if(result) {
+                    setError(`${result.title}\n${result.errors.DuplicateUserName??""}\n${result.errors.PasswordRequiresDigit??""}\n${result.errors.PasswordRequiresNonAlphanumeric??""}\n${result.errors.PasswordRequiresUpper??""}\n${result.errors.PasswordTooShort??""}`);
+                    console.log("Result: ", result);
+                  }
                 })
                 .catch((error) => {
                     // handle network error
