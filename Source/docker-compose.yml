@@ -1,0 +1,8 @@
+﻿services:
+  fims.server:
+    image: fims.server
+    build:
+      context: .
+      dockerfile: Fims.Server/Dockerfile
+    ports:
+      - 82:8080
