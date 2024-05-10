@@ -4,5 +4,6 @@
     build:
       context: .
       dockerfile: Fims.Server/Dockerfile
+    user: root
     ports:
       - 82:8080
