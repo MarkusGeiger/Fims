@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 const UserContext = createContext({});
 
 interface User {
+    id: string;
     email: string;
 }
 
@@ -13,7 +14,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
 
     const [authorized, setAuthorized] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true); // add a loading state
-    let emptyuser: User = { email: "" };
+    let emptyuser: User = { id: "", email: "" };
 
     const [user, setUser] = useState(emptyuser);
 
@@ -39,7 +40,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
                 if (response.status == 200) {
                     console.log("Authorized");
                     let j: any = await response.json();
-                    setUser({ email: j.email });
+                    setUser({ id: j.id, email: j.email });
                     setAuthorized(true);
                     return response; // return the response
                 } else if (response.status == 401) {
@@ -109,9 +110,14 @@ export function AuthorizedUser(props: { value: string }) {
 
     // Display the username in a h1 tag
     if (props.value == "email")
-        return <>{user.email}</>;
+        return <>{user.id} {user.email}</>;
     else
         return <></>
+}
+
+export function AuthorizedUserData(){
+  const user: any = React.useContext(UserContext);
+  return user.email;
 }
 
 export default AuthorizeView;

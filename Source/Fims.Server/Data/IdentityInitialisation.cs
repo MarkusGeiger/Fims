@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Fims.Server.Data;
 
@@ -7,47 +8,41 @@ public class IdentityInitialisation(
   ILogger<IdentityInitialisation> logger,
   ApplicationDbContext db,
   UserManager<ApplicationUser> userManager,
-  RoleManager<ApplicationRole> roleManager
-  )
+  RoleManager<ApplicationRole> roleManager,
+  IOptions<ApplicationIdentityOptions> options)
 {
   public async Task Run()
   {
     logger.LogInformation("Migrating Database");
     await db.Database.MigrateAsync();
-    
-    // Configuration
-    var adminUserName = "admin@admin.com";
-    var adminPassword = "Admin!23";
-    var adminRoleName = "admin";
-    var memberRoleName = "member";
 
     logger.LogInformation("Adding default roles.");
-    await CreateRoleAsync(adminRoleName);
-    await CreateRoleAsync(memberRoleName);
+    await CreateRoleAsync(options.Value.Roles.AdminRoleName);
+    await CreateRoleAsync(options.Value.Roles.MemberRoleName);
     
-    var adminUser = await userManager.FindByNameAsync(adminUserName);
+    var adminUser = await userManager.FindByNameAsync(options.Value.DefaultAdminUserName);
     if (adminUser == null)
     {
       logger.LogInformation("Creating admin user");
       adminUser = new ApplicationUser
       {
-        UserName = adminUserName,
-        Email = adminUserName,
+        UserName = options.Value.DefaultAdminUserName,
+        Email = options.Value.DefaultAdminUserName,
         EmailConfirmed = true
       };
 
-      var result = await userManager.CreateAsync(adminUser, adminPassword);
-      adminUser = await userManager.FindByNameAsync(adminUser.UserName);
+      var result = await userManager.CreateAsync(adminUser, options.Value.DefaultAdminPassword);
+      adminUser = await userManager.FindByNameAsync(options.Value.DefaultAdminUserName);
       logger.LogWarning($"Default admin account created: result='{result}' id='{adminUser?.Id}'");
     }
     else
     {
-      logger.LogWarning($"User {adminUser.UserName} already exists!");
+      logger.LogWarning($"User {options.Value.DefaultAdminUserName} already exists!");
     }
 
-    if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, adminRoleName))
+    if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, options.Value.Roles.AdminRoleName))
     {
-      await userManager.AddToRoleAsync(adminUser, adminRoleName);
+      await userManager.AddToRoleAsync(adminUser, options.Value.Roles.AdminRoleName);
     }
   }
 

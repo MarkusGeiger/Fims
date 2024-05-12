@@ -7,6 +7,7 @@ import UserManagement from "../Components/UserManagement.tsx";
 function Home() {
     return (
         <AuthorizeView>
+            <p><a href="https://localhost:7190/swagger/index.html">Swagger</a></p>
             <span><LogoutLink>Logout <AuthorizedUser value="email"/></LogoutLink></span>
             <WeatherForecast/>
             <UserManagement/>

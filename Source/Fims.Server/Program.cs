@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Fims.Server;
 using Fims.Server.Data;
 using Fims.Server.Data.Migrations;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Identity
+builder.Services.Configure<ApplicationIdentityOptions>(
+  builder.Configuration.GetSection(ApplicationIdentityOptions.Section));
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

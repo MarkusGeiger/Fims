@@ -1,4 +1,6 @@
 import {useEffect, useState} from "react";
+import { AuthorizedUserData } from "./AuthorizeView";
+import "./UserManagement.css"
 
 interface User {
     id: string;
@@ -38,16 +40,19 @@ function UserManagement() {
             </tr>
             </thead>
             <tbody>
-            {users.map(user =>
-                <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
-                    <td>{user.emailConfirmed ? "✅" : "❌"}</td>
-                    {/* <td>{user.roles.map(r => r + ", ")}</td> */}
-                    <td>{user.roles}</td>
-                    <td><button data-uid={user.id} onClick={handleDeleteClick}>delete</button></td>
-                </tr>
+            {users.map(user => 
+              {
+                const isCurrentUser = AuthorizedUserData() === user.email;
+                return (<tr key={user.id} className={isCurrentUser ? "current" : ""}>
+                      <td>{user.id}</td>
+                      <td>{user.username}</td>
+                      <td>{user.email}</td>
+                      <td>{user.emailConfirmed ? "✅" : "❌"}</td>
+                      {/* <td>{user.roles.map(r => r + ", ")}</td> */}
+                      <td>{user.roles}</td>
+                      <td><button disabled={isCurrentUser} data-uid={user.id} onClick={handleDeleteClick}>delete</button></td>
+                  </tr>)
+                }
             )}
             </tbody>
         </table>;
