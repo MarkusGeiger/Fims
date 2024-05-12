@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Fims.Server.Data;
+using Fims.Server.Data.Migrations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
   .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Add services to the container.
+builder.Services.AddTransient<IdentityInitialisation>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -39,10 +41,10 @@ app.Logger.LogInformation($"Before Migration: Database path: '{Path.GetFullPath(
 
 // Do the database migrations on startup
 using(var scope = app.Services.CreateScope()){
-  var db = scope.ServiceProvider.GetService<ApplicationDbContext>();
-  if (db != null)
+  var init = scope.ServiceProvider.GetService<IdentityInitialisation>();
+  if (init != null)
   {
-    await db.Database.MigrateAsync();
+    await init.Run();
   }
 }
 app.Logger.LogInformation($"After Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");

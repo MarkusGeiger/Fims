@@ -23,15 +23,16 @@ public class UserController : ControllerBase
   [HttpGet(Name = "GetUsers")]
   public async Task<IResult> Index()
   {
-    var users = await _userManager.Users.Select(u => new
+    var users = await _userManager.Users.ToListAsync();
+    var userResultList = users.Select(u => new
     {
       id = u.Id,
       email = u.Email,
       username = u.UserName,
       emailconfirmed = u.EmailConfirmed,
-      //roles=await _userManager.GetRolesAsync(u)
-    }).ToListAsync();
-    return Results.Json(users);
+      // roles = await _userManager.GetRolesAsync(u)
+    }).ToList();
+    return Results.Json(userResultList);
   }
 
   [HttpDelete]
