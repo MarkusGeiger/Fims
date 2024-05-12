@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fims.Server.Data.Migrations;
+namespace Fims.Server.Data;
 
 public class IdentityInitialisation(
   ILogger<IdentityInitialisation> logger,
