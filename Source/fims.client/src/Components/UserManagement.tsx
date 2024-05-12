@@ -5,6 +5,7 @@ interface User {
     username: string;
     email: string;
     emailConfirmed: boolean;
+    roles: string[];
 }
 
 function UserManagement() {
@@ -32,6 +33,7 @@ function UserManagement() {
                 <th>Username</th>
                 <th>Email</th>
                 <th>Email confirmed</th>
+                <th>Roles</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -42,6 +44,8 @@ function UserManagement() {
                     <td>{user.username}</td>
                     <td>{user.email}</td>
                     <td>{user.emailConfirmed ? "✅" : "❌"}</td>
+                    {/* <td>{user.roles.map(r => r + ", ")}</td> */}
+                    <td>{user.roles}</td>
                     <td><button data-uid={user.id} onClick={handleDeleteClick}>delete</button></td>
                 </tr>
             )}
