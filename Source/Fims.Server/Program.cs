@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+  .AddRoles<ApplicationRole>()
   .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Add services to the container.

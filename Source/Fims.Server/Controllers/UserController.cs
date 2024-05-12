@@ -24,14 +24,22 @@ public class UserController : ControllerBase
   public async Task<IResult> Index()
   {
     var users = await _userManager.Users.ToListAsync();
-    var userResultList = users.Select(u => new
+    var userResultList =  users.Select(u => new
     {
       id = u.Id,
       email = u.Email,
       username = u.UserName,
       emailconfirmed = u.EmailConfirmed,
-      // roles = await _userManager.GetRolesAsync(u)
+      roles = new List<string>()
     }).ToList();
+    foreach (var userResult in userResultList)
+    {
+      var currentUser = await _userManager.FindByIdAsync(userResult.id);
+      if (currentUser != null)
+      {
+        userResult.roles.AddRange(await _userManager.GetRolesAsync(currentUser));
+      }
+    }
     return Results.Json(userResultList);
   }
 
