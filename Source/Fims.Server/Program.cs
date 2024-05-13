@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Fims.Server;
 using Fims.Server.Data;
 using Fims.Server.Data.Migrations;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
   .AddRoles<ApplicationRole>()
   .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Auth0 Backend-for-Frontend OAuth https://auth0.com/blog/backend-for-frontend-pattern-with-auth0-and-dotnet/#Backend-For-FrontEnd-in-ASP-NET-Core
+builder.Services.AddOAuthAuthentication(builder.Configuration.GetSection("OAuth"));
 
 // Add services to the container.
 builder.Services.AddTransient<IdentityInitialisation>();
@@ -57,6 +61,13 @@ app.Logger.LogInformation($"After Migration: Database path: '{Path.GetFullPath(d
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+// Auth0 Backend-for-Frontend
+// app.UseRouting();
+// app.UseAuthentication();
+// app.UseAuthorization();
+// app.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
+
 
 // Identity API
 app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
