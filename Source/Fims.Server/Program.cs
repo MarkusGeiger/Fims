@@ -81,7 +81,8 @@ app.MapGet("/api/pingauth", (ClaimsPrincipal user) =>
   // This is used by the frontend to acquire information about the logged in user,
   // that's stored inside the HTTP-only cookie in the browser and not accessible from JS
   var email = user.FindFirstValue(ClaimTypes.Email);
-  return Results.Json(new { Email = email });
+  var id = user.FindFirstValue(ClaimTypes.PrimarySid);
+  return Results.Json(new { Id=id, Email = email });
 }).RequireAuthorization();
 
 // Configure the HTTP request pipeline.

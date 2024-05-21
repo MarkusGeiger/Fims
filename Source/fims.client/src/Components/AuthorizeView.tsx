@@ -1,8 +1,10 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { Navigate } from 'react-router-dom';
+import { ApplicationConstants } from '../Utils/ApplicationConstants';
 
 
-const UserContext = createContext({});
+const UserContext = createContext<User>({id:"", email:""});
+const useUser = () => React.useContext<User>(UserContext);
 
 interface User {
     id: string;
@@ -34,12 +36,18 @@ function AuthorizeView(props: { children: React.ReactNode }) {
         async function fetchWithRetry(url: string, options: any) {
             try {
                 // make the fetch request
+                console.log("Fetching now", url, options);
+                
                 let response = await fetch(url, options);
 
+                console.log("Fetch response", response);
                 // check the status code
                 if (response.status == 200) {
                     console.log("Authorized");
+                    let plaintext = await response.text();
+                    console.log("Response plain text", plaintext)
                     let j: any = await response.json();
+                    console.log("Response Json", j)
                     setUser({ id: j.id, email: j.email });
                     setAuthorized(true);
                     return response; // return the response
@@ -59,19 +67,20 @@ function AuthorizeView(props: { children: React.ReactNode }) {
                     throw error;
                 } else {
                     // wait for some time and retry
+                    console.log(`Failed to fetch ${url}, wait for some time and retry", ${retryCount}, ${delay}`, error);
                     await wait(delay);
-                    return fetchWithRetry(url, options);
+                    return await fetchWithRetry(url, options);
                 }
             }
         }
 
         // call the fetch function with retry logic
-        fetchWithRetry("/api/pingauth", {
+        fetchWithRetry(ApplicationConstants.Api.PingAuth, {
             method: "GET",
         })
             .catch((error) => {
                 // handle the final error
-                console.log(error.message);
+                console.log("Finally failed to fetch pingauth", error);
             })
             .finally(() => {
                 setLoading(false);  // set loading to false when the fetch is done
@@ -79,34 +88,23 @@ function AuthorizeView(props: { children: React.ReactNode }) {
     }, []);
 
 
+      console.log("AuthorizeViewState", loading, authorized);
     if (loading) {
-        return (
-            <>
-                <p>Loading...</p>
-            </>
-        );
+      
+        return <p>Loading...</p>;
     }
+    else if (authorized && !loading) {
+            return (<UserContext.Provider value={user}>{props.children}</UserContext.Provider>);
+    } 
     else {
-        if (authorized && !loading) {
-            return (
-                <>
-                    <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
-                </>
-            );
-        } else {
-            return (
-                <>
-                    <Navigate to="/login" />
-                </>
-            )
-        }
+        return (<Navigate to={ApplicationConstants.Routes.Login} />);
     }
-
 }
 
 export function AuthorizedUser(props: { value: string }) {
     // Consume the username from the UserContext
-    const user: any = React.useContext(UserContext);
+    const user = useUser();
+  console.log("AuthorizedUser", user);
 
     // Display the username in a h1 tag
     if (props.value == "email")
@@ -116,7 +114,7 @@ export function AuthorizedUser(props: { value: string }) {
 }
 
 export function AuthorizedUserData(){
-  const user: any = React.useContext(UserContext);
+  const user = useUser();
   return user.email;
 }
 

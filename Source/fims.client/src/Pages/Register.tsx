@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ApplicationConstants } from "../Utils/ApplicationConstants";
 
 interface ErrorResponse {
   title: string;
@@ -24,7 +25,7 @@ function Register() {
     const [error, setError] = useState("");
 
     const handleLoginClick = () => {
-        navigate("/login");
+        navigate(ApplicationConstants.Routes.Login);
     }
 
 
@@ -50,7 +51,7 @@ function Register() {
             // clear error message
             setError("");
             // post data to the /register api
-            fetch("/api/register", {
+            fetch(ApplicationConstants.Routes.Register, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

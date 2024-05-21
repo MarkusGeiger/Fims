@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
     });
   }
   
-  [HttpGet("user")]
+  [HttpGet("GetUser")]
   public IResult GetUser()
   {
     if (User.Identity is { IsAuthenticated: true })

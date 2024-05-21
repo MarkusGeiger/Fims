@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ApplicationConstants } from "../Utils/ApplicationConstants";
 
 interface ErrorResponse {
   title: string;
@@ -24,7 +25,7 @@ function Login() {
     };
 
     const handleRegisterClick = () => {
-        navigate("/register");
+        navigate(ApplicationConstants.Routes.Register);
     }
 
     // handle submit event for the form
@@ -40,9 +41,9 @@ function Login() {
 
             var loginurl = "";
             if (rememberme == true)
-                loginurl = "/api/login?useCookies=true";
+                loginurl = ApplicationConstants.Api.LoginUseCookies;
             else
-                loginurl = "/api/login?useSessionCookies=true";
+                loginurl = ApplicationConstants.Api.LoginUseSessionCookies;
 
             fetch(loginurl, {
                 method: "POST",
@@ -60,7 +61,7 @@ function Login() {
                     console.log(data);
                     if (data.ok) {
                         setError("Successful Login.");
-                        window.location.href = '/';
+                        window.location.href = ApplicationConstants.Routes.Root;
                     }
                     else {
                       return data.json() as Promise<ErrorResponse>;
@@ -83,6 +84,8 @@ function Login() {
 
     return (
         <div className="containerbox">
+            <h3>OAuth</h3>
+              <Link to="/oauth">OAuth Login</Link>
             <h3>Login</h3>
             <form onSubmit={handleSubmit}>
                 <div>
