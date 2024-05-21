@@ -1,20 +1,39 @@
+using System.Text.RegularExpressions;
+using Fims.Server.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Fims.Server.Data;
+namespace Fims.Server.Identity;
 
-public class IdentityInitialisation(
+public partial class IdentityInitialisation(
   ILogger<IdentityInitialisation> logger,
+  IConfiguration configuration,
   ApplicationDbContext db,
   UserManager<ApplicationUser> userManager,
   RoleManager<ApplicationRole> roleManager,
   IOptions<ApplicationIdentityOptions> options)
 {
+  [GeneratedRegex("^DataSource=(?<dbSource>.*);.*$")]
+  private static partial Regex ConnectionStringRegex();
+  
   public async Task Run()
   {
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+      logger.LogCritical("Failed to get connection string 'DefaultConnection'.");
+      return;
+    }
+    logger.LogInformation($"Connection string: '{connectionString}'");
+    var match = ConnectionStringRegex().Match(connectionString);
+    var dbPath = match.Groups["dbSource"].Value;
+    logger.LogInformation($"Before Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");
+    
     logger.LogInformation("Migrating Database");
     await db.Database.MigrateAsync();
+    
+    logger.LogInformation($"After Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");
 
     logger.LogInformation("Adding default roles.");
     await CreateRoleAsync(options.Value.Roles.AdminRoleName);

@@ -1,8 +1,7 @@
-using System.Net.Mime;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fims.Server.Data;
+namespace Fims.Server.Identity.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {

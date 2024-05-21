@@ -1,11 +1,11 @@
 using System.Security.Claims;
-using Fims.Server.Data;
+using Fims.Server.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fims.Server.Controllers;
+namespace Fims.Server.Identity.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -23,24 +23,47 @@ public class UserController : ControllerBase
     _signinManager = signinManager;
   }
   
+  
+  [HttpPost("/api/logout")]
+  [Authorize]
+  public async Task<IResult> Logout()
+  {
+    await _signinManager.SignOutAsync();
+    return Results.Ok();
+  }
+  
+  [HttpGet("/api/pingauth")]
+  [Authorize]
+  public IResult GetCurrentUserInformation()
+  {
+    // This is used by the frontend to acquire information about the logged in user,
+    // that's stored inside the HTTP-only cookie in the browser and not accessible from JS
+    var email = User.FindFirstValue(ClaimTypes.Email);
+    return Results.Json(new { Email = email });
+  }
+
+  public record GetUserResponseDto(string Id, string? Email, string? Username, bool EmailConfirmed, List<string> Roles)
+  {
+    public override string ToString()
+    {
+      return $"{{ id = {Id}, email = {Email}, username = {Username}, emailConfirmed = {EmailConfirmed}, roles = {Roles} }}";
+    }
+  }
+
   [HttpGet(Name = "GetUsers")]
   public async Task<IResult> Index()
   {
+    // Get all users from UserManager
     var users = await _userManager.Users.ToListAsync();
-    var userResultList =  users.Select(u => new
-    {
-      id = u.Id,
-      email = u.Email,
-      username = u.UserName,
-      emailconfirmed = u.EmailConfirmed,
-      roles = new List<string>()
-    }).ToList();
+    // Transform the application internal user objects into response objects
+    var userResultList = users.Select(u => new GetUserResponseDto(u.Id, u.Email, u.UserName, u.EmailConfirmed, [])).ToList();
+    // Add additional role information to all response objects
     foreach (var userResult in userResultList)
     {
-      var currentUser = await _userManager.FindByIdAsync(userResult.id);
+      var currentUser = await _userManager.FindByIdAsync(userResult.Id);
       if (currentUser != null)
       {
-        userResult.roles.AddRange(await _userManager.GetRolesAsync(currentUser));
+        userResult.Roles.AddRange(await _userManager.GetRolesAsync(currentUser));
       }
     }
     return Results.Json(userResultList);

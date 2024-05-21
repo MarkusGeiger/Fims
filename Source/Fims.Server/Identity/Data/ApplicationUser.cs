@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Fims.Server.Data;
+namespace Fims.Server.Identity.Data;
 
 public class ApplicationUser : IdentityUser
 {
