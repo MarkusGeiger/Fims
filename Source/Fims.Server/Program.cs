@@ -1,11 +1,6 @@
-using System.Security.Claims;
-using System.Text.RegularExpressions;
-using Fims.Server;
-using Fims.Server.Data;
-using Fims.Server.Data.Migrations;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Fims.Server.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +13,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.Logger.LogInformation("Starting up. " +
+                          $"Version: {Assembly.GetEntryAssembly()?.GetName().Version}, " +
+                          $"CLR Version: {Environment.Version}, " +
+                          $"OS Version: {Environment.OSVersion}, " +
+                          $"OS: {RuntimeInformation.OSDescription}, " +
+                          $"Architecture: {RuntimeInformation.ProcessArchitecture}, " +
                           $"Working directory: '{Directory.GetCurrentDirectory()}', " +
-                          $"Base directory: '{AppContext.BaseDirectory}'");
+                          $"Base directory: '{AppContext.BaseDirectory}', " +
+                          $"Current directory: '{Environment.CurrentDirectory}'");
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
