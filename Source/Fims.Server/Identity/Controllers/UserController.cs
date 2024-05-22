@@ -4,31 +4,26 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Fims.Server.Identity.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UserController : ControllerBase
+public class UserController(
+  ILogger<UserController> logger,
+  UserManager<ApplicationUser> userManager,
+  SignInManager<ApplicationUser> signinManager,
+  RoleManager<ApplicationRole> roleManager,
+  IOptions<ApplicationIdentityOptions> identityOptions)
+  : ControllerBase
 {
-  private readonly ILogger<UserController> _logger;
-  private readonly UserManager<ApplicationUser> _userManager;
-  private readonly SignInManager<ApplicationUser> _signinManager;
-
-  public UserController(ILogger<UserController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signinManager)
-  {
-    _logger = logger;
-    _userManager = userManager;
-    _signinManager = signinManager;
-  }
-  
-  
   [HttpPost("/api/logout")]
   [Authorize]
   public async Task<IResult> Logout()
   {
-    await _signinManager.SignOutAsync();
+    await signinManager.SignOutAsync();
     return Results.Ok();
   }
   
@@ -50,20 +45,28 @@ public class UserController : ControllerBase
     }
   }
 
+  public record GetRolesResponseDto(string Id, string? Name)
+  {
+    public override string ToString()
+    {
+      return $"{{ id = {Id}, name = {Name} }}";
+    }
+  }
+
   [HttpGet(Name = "GetUsers")]
   public async Task<IResult> Index()
   {
     // Get all users from UserManager
-    var users = await _userManager.Users.ToListAsync();
+    var users = await userManager.Users.ToListAsync();
     // Transform the application internal user objects into response objects
     var userResultList = users.Select(u => new GetUserResponseDto(u.Id, u.Email, u.UserName, u.EmailConfirmed, [])).ToList();
     // Add additional role information to all response objects
     foreach (var userResult in userResultList)
     {
-      var currentUser = await _userManager.FindByIdAsync(userResult.Id);
+      var currentUser = await userManager.FindByIdAsync(userResult.Id);
       if (currentUser != null)
       {
-        userResult.Roles.AddRange(await _userManager.GetRolesAsync(currentUser));
+        userResult.Roles.AddRange(await userManager.GetRolesAsync(currentUser));
       }
     }
     return Results.Json(userResultList);
@@ -72,13 +75,25 @@ public class UserController : ControllerBase
   [HttpDelete]
   public async Task<IResult> DeleteUser([FromQuery] string id)
   {
-    var userId = _userManager.GetUserId(User);
+    var userId = userManager.GetUserId(User);
     if (userId == id)
     {
       return Results.BadRequest("Cannot delete current user.");
     }
-    var result = await _userManager.DeleteAsync(_userManager.Users.First(u => u.Id == id));
+    var result = await userManager.DeleteAsync(userManager.Users.First(u => u.Id == id));
 
     return result.Succeeded ? Results.Ok() : Results.NotFound(result);
+  }
+  
+  [HttpGet("/api/[controller]/Roles")]
+  public async Task<IResult> GetUserRoles()
+  {
+    var roles = await roleManager.Roles.ToListAsync();
+    if (!roles.Any())
+    {
+      return Results.NotFound();
+    }
+
+    return Results.Ok(roles.Select(r => new GetRolesResponseDto(r.Id, r.Name)));
   }
 }
