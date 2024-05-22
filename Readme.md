@@ -7,7 +7,7 @@ The main UI application is a ASP .NET Core Web API with a vite based react front
 
 ### Main Features:
 * User Management
-  * Authentication with indivdual user accounts
+  * Authentication with indivdual user accounts ✅
   * Authentication using OAuth
   * User management
 * Inventory Management
@@ -15,7 +15,7 @@ The main UI application is a ASP .NET Core Web API with a vite based react front
   * Inventory items are hierachically organized and displayed
   * The structure can be customized anytime
 * Observability
-  * Full Opentelemetry integration
+  * Full Opentelemetry integration (Done using shortcut via Aspire ✅)
 
 # Used material to create this so far
 * ASP.NET Core & React Identity:
