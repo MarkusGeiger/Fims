@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Fims.Server.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.AddServiceDefaults();
 builder.AddIdentity();
 
 builder.Services.AddControllers();
@@ -24,7 +24,6 @@ app.Logger.LogInformation("Starting up. " +
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
 await app.MapIdentityAsync();
 
 // Configure the HTTP request pipeline.
@@ -39,5 +38,7 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+app.MapDefaultEndpoints();
 
 app.Run();

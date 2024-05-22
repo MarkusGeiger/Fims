@@ -33,6 +33,7 @@
     <ProjectReference Include="..\fims.client\fims.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\Fims.ServiceDefaults\Fims.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>
