@@ -17,6 +17,11 @@ The main UI application is a ASP .NET Core Web API with a vite based react front
 * Observability
   * Full Opentelemetry integration (Done using shortcut via Aspire ✅)
 
+### Additional tasks:
+* dotnet format
+* Build
+
+
 # Used material to create this so far
 * ASP.NET Core & React Identity:
   * [Coding with Tom - YouTube](https://youtu.be/eYiLt2gQuME?si=biQYTxXztPYYGQ_o) + [Github](https://github.com/codingwithtom1/ReactIdentity)
