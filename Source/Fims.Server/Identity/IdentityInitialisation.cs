@@ -39,14 +39,14 @@ public partial class IdentityInitialisation(
     await CreateRoleAsync(options.Value.Roles.AdminRoleName);
     await CreateRoleAsync(options.Value.Roles.MemberRoleName);
     
-    var adminUser = await userManager.FindByNameAsync(options.Value.DefaultAdminUserName);
+    var adminUser = await userManager.FindByEmailAsync(options.Value.DefaultAdminEmail);
     if (adminUser == null)
     {
       logger.LogInformation("Creating admin user");
       adminUser = new ApplicationUser
       {
         UserName = options.Value.DefaultAdminUserName,
-        Email = options.Value.DefaultAdminUserName,
+        Email = options.Value.DefaultAdminEmail,
         EmailConfirmed = true
       };
 

@@ -1,9 +1,5 @@
-using System.Security.Claims;
-using Fims.Server.Data;
 using Fims.Server.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using IdentityInitialisation = Fims.Server.Identity.IdentityInitialisation;
 
 namespace Fims.Server.Identity;
 

@@ -1,69 +1,46 @@
 import { useEffect, useState } from "react";
 import { AuthorizedUserData } from "./AuthorizeView";
 import "./UserManagement.css"
-
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  emailConfirmed: boolean;
-  roles: string[];
-}
-
-interface Role {
-  id: string;
-  name: string;
-}
+import RoleManagement from "./RoleManagement";
+import DeleteUserButton from "./DeleteUserButton";
+import UserEdit from "./UserEdit";
+import { User } from "../Types/UserTypes";
 
 function UserManagement() {
   const [users, setUsers] = useState<User[]>();
-  const [roles, setRoles] = useState<Role[]>();
+  const [editUser, setEditUser] = useState<User>();
 
   useEffect(() => {
     getUserData();
-    getRoleData();
   }, []);
 
-  async function handleDeleteClick(e: React.MouseEvent) {
-    const userId = e.currentTarget.getAttribute("data-uid") ?? "";
-    console.log("User to be deleted: ", userId);
-    const confirmed = confirm(`Do you really want to delete user '${userId}' (${users?.find(u => u.id === userId)?.email})`);
-    if (confirmed) {
-      await deleteUser(userId);
-    }
+  async function handleEditClick(user: User) {
+    console.log("User to be edited: ", user.id);
+    setEditUser(user);
   }
 
-  return (
-    <div>
-      <h1 id="tabelLabel">Users</h1>
-      <p>This component demonstrates fetching data from the server.</p>
-      {users === undefined ? getLoadingContent() : getUserManagementContent(users)}
-      {roles === undefined ? getLoadingContent() : getRoleManagementContent(roles)}
-    </div>
-  );
-
-  function getRoleManagementContent(roles: Role[]){
-    return (
-    <>
-      <p>Available Roles:</p>
-      <table>
-        <thead>
-          <th>ID</th>
-          <th>Rolename</th>
-        </thead>
-        <tbody>
-          {roles.map(r => (
-            <tr>
-              <td>{r.id}</td>
-              <td>{r.name}</td>
-            </tr>))}
-        </tbody>
-      </table>
+  function getUserManagementContent() {
+    return <>
+      {editUser == undefined || editUser == null ? getUserList() : getUserEditComponent() }
     </>
-    );
   }
 
-  function getUserManagementContent(users: User[]) {
+  function onUserEditSaved(){
+    console.log("UserEdit saved in UserManagement");
+    
+    setEditUser(undefined);
+    getUserData();
+  }
+
+  function getUserEditComponent(){
+    return <>
+      <div>
+        <UserEdit user={editUser!} onCancel={() => setEditUser(undefined)} onSave={onUserEditSaved}/>
+      </div>
+    </>
+  }
+
+  function getUserList(){
     return <table className="table table-striped" aria-labelledby="tabelLabel">
       <thead>
         <tr>
@@ -76,7 +53,7 @@ function UserManagement() {
         </tr>
       </thead>
       <tbody>
-        {users.map(user => {
+        {users?.map(user => {
           const isCurrentUser = AuthorizedUserData() === user.email;
           return (<tr key={user.id} className={isCurrentUser ? "current" : ""}>
             <td>{user.id}</td>
@@ -85,13 +62,25 @@ function UserManagement() {
             <td>{user.emailConfirmed ? "✅" : "❌"}</td>
             {/* <td>{user.roles.map(r => r + ", ")}</td> */}
             <td>{user.roles}</td>
-            <td><button disabled={isCurrentUser} data-uid={user.id} onClick={handleDeleteClick}>delete</button></td>
+            <td>
+              <button disabled={isCurrentUser} onClick={() => handleEditClick(user)}>edit</button>
+              <DeleteUserButton user={user} disabled={isCurrentUser}/>
+            </td>
           </tr>);
         }
         )}
       </tbody>
     </table>;
   }
+
+  return (
+    <div>
+      <h1 id="tabelLabel">Users</h1>
+      <p>This component demonstrates fetching data from the server.</p>
+      {users === undefined ? getLoadingContent() : getUserManagementContent()}
+      { <RoleManagement />}
+    </div>
+  );
 
   function getLoadingContent() {
     return <p><em>Loading...</em></p>;
@@ -105,26 +94,6 @@ function UserManagement() {
     setUsers(data);
   }
 
-  async function getRoleData() {
-    const response = await fetch('api/user/roles');
-    const data = await response.json();
-    console.log("Roles:", data);
-
-    setRoles(data);
-  }
-
-  async function deleteUser(userId: string) {
-    const response = await fetch(`api/user?id=${userId}`, { method: "DELETE" })
-    console.log("User delete response:", response);
-
-    if (!response.ok) {
-      const data = await response.json();
-      console.error("Failed to delete user.", data);
-    }
-    else {
-      await getUserData();
-    }
-  }
 }
 
 export default UserManagement;
