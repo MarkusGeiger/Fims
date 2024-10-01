@@ -5,6 +5,7 @@ import RoleManagement from "./RoleManagement";
 import DeleteUserButton from "./DeleteUserButton";
 import UserEdit from "./UserEdit";
 import { User } from "../Types/UserTypes";
+import UserList from "./UserList";
 
 function UserManagement() {
   const [users, setUsers] = useState<User[]>();
@@ -41,36 +42,7 @@ function UserManagement() {
   }
 
   function getUserList(){
-    return <table className="table table-striped" aria-labelledby="tabelLabel">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Email confirmed</th>
-          <th>Roles</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {users?.map(user => {
-          const isCurrentUser = AuthorizedUserData() === user.email;
-          return (<tr key={user.id} className={isCurrentUser ? "current" : ""}>
-            <td>{user.id}</td>
-            <td>{user.username}</td>
-            <td>{user.email}</td>
-            <td>{user.emailConfirmed ? "✅" : "❌"}</td>
-            {/* <td>{user.roles.map(r => r + ", ")}</td> */}
-            <td>{user.roles}</td>
-            <td>
-              <button disabled={isCurrentUser} onClick={() => handleEditClick(user)}>edit</button>
-              <DeleteUserButton user={user} disabled={isCurrentUser}/>
-            </td>
-          </tr>);
-        }
-        )}
-      </tbody>
-    </table>;
+    return <UserList onEditClick={handleEditClick} users={users ?? []}/>
   }
 
   return (

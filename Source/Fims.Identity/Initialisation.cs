@@ -1,18 +1,21 @@
 using System.Text.RegularExpressions;
-using Fims.Server.Identity.Data;
+using Fims.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Options = Fims.Identity.Options;
 
-namespace Fims.Server.Identity;
+namespace Fims.Identity;
 
-public partial class IdentityInitialisation(
-  ILogger<IdentityInitialisation> logger,
+public partial class Initialisation(
+  ILogger<Initialisation> logger,
   IConfiguration configuration,
-  ApplicationDbContext db,
-  UserManager<ApplicationUser> userManager,
-  RoleManager<ApplicationRole> roleManager,
-  IOptions<ApplicationIdentityOptions> options)
+  IdentityDbContext identityDb,
+  UserManager<User> userManager,
+  RoleManager<Role> roleManager,
+  IOptions<Options> options)
 {
   [GeneratedRegex("^DataSource=(?<dbSource>.*);.*$")]
   private static partial Regex ConnectionStringRegex();
@@ -31,7 +34,7 @@ public partial class IdentityInitialisation(
     logger.LogInformation($"Before Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");
     
     logger.LogInformation("Migrating Database");
-    await db.Database.MigrateAsync();
+    await identityDb.Database.MigrateAsync();
     
     logger.LogInformation($"After Migration: Database path: '{Path.GetFullPath(dbPath)}', DB exists: {File.Exists(dbPath)}");
 
@@ -43,7 +46,7 @@ public partial class IdentityInitialisation(
     if (adminUser == null)
     {
       logger.LogInformation("Creating admin user");
-      adminUser = new ApplicationUser
+      adminUser = new User
       {
         UserName = options.Value.DefaultAdminUserName,
         Email = options.Value.DefaultAdminEmail,
@@ -70,7 +73,7 @@ public partial class IdentityInitialisation(
     var role = await roleManager.FindByNameAsync(roleName);
     if (role == null)
     {
-      role = new ApplicationRole(roleName);
+      role = new Role(roleName);
       var result = await roleManager.CreateAsync(role);
       logger.LogWarning($"Default role {roleName} created: result='{result}' id='{role.Id}'");
     }

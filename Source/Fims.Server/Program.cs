@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Fims.Server.Identity;
+using Fims.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();

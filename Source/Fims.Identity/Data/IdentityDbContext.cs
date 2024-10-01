@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fims.Server.Identity.Data;
+namespace Fims.Identity.Data;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+public class IdentityDbContext : IdentityDbContext<User, Role, string>
 {
-  public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+  public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
   {
     
   }

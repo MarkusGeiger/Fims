@@ -1,6 +1,6 @@
-namespace Fims.Server;
+namespace Fims.Identity;
 
-public class ApplicationIdentityOptions
+public class Options
 {
   public static readonly string Section = "Identity";
   public string DefaultAdminUserName = "Administrator";

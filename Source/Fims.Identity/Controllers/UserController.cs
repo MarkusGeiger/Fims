@@ -1,23 +1,24 @@
 using System.Security.Claims;
-using Fims.Server.Identity.Data;
+using Fims.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Fims.Server.Identity.Controllers;
+namespace Fims.Identity.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class UserController(
   ILogger<UserController> logger,
-  UserManager<ApplicationUser> userManager,
-  SignInManager<ApplicationUser> signinManager,
-  RoleManager<ApplicationRole> roleManager,
-  IOptions<ApplicationIdentityOptions> identityOptions)
+  UserManager<User> userManager,
+  SignInManager<User> signinManager,
+  RoleManager<Role> roleManager,
+  IOptions<Options> identityOptions)
   : ControllerBase
 {
   [HttpPost("/api/logout")]

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Fims.Server.Identity.Data;
+namespace Fims.Identity.Data;
 
-public class ApplicationUser : IdentityUser
+public class User : IdentityUser
 {
   public string AdditionalInformation { get; set; } = "";
 }
