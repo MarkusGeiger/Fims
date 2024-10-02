@@ -11,9 +11,11 @@
 
     <ItemGroup>
         <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.1"/>
+        <PackageReference Include="Keycloak.AuthServices.Aspire.Hosting" Version="0.1.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Fims.API\Fims.API.csproj" />
       <ProjectReference Include="..\Fims.Server\Fims.Server.csproj" />
     </ItemGroup>
 

@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fims.Identity", "Fims.Ident
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fims.AppHost", "Fims.AppHost\Fims.AppHost.csproj", "{20910549-4E1F-4E79-8C1A-88CE526EF908}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fims", "Fims", "{D0FA8290-9C0B-4B52-B25F-198459DF79DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fims.API", "Fims.API\Fims.API.csproj", "{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,11 +50,20 @@ Global
 		{20910549-4E1F-4E79-8C1A-88CE526EF908}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20910549-4E1F-4E79-8C1A-88CE526EF908}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20910549-4E1F-4E79-8C1A-88CE526EF908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76D697A2-B1F5-4181-96A5-51F781DB7C82}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8269C9A-23C6-488F-A7CE-56406B1D78A8} = {D0FA8290-9C0B-4B52-B25F-198459DF79DA}
+		{E07AB7B6-2E6D-4214-9785-C8A579C0B968} = {D0FA8290-9C0B-4B52-B25F-198459DF79DA}
+		{DC8E3717-2FD5-4BBA-86E7-2DADF0D122BF} = {D0FA8290-9C0B-4B52-B25F-198459DF79DA}
 	EndGlobalSection
 EndGlobal
