@@ -42,24 +42,24 @@ public partial class Initialisation(
     await CreateRoleAsync(options.Value.Roles.AdminRoleName);
     await CreateRoleAsync(options.Value.Roles.MemberRoleName);
     
-    var adminUser = await userManager.FindByEmailAsync(options.Value.DefaultAdminEmail);
+    var adminUser = await userManager.FindByEmailAsync(options.Value.Defaults.AdminEmail);
     if (adminUser == null)
     {
       logger.LogInformation("Creating admin user");
       adminUser = new User
       {
-        UserName = options.Value.DefaultAdminUserName,
-        Email = options.Value.DefaultAdminEmail,
+        UserName = options.Value.Defaults.AdminUserName,
+        Email = options.Value.Defaults.AdminEmail,
         EmailConfirmed = true
       };
 
-      var result = await userManager.CreateAsync(adminUser, options.Value.DefaultAdminPassword);
-      adminUser = await userManager.FindByNameAsync(options.Value.DefaultAdminUserName);
+      var result = await userManager.CreateAsync(adminUser, options.Value.Defaults.AdminPassword);
+      adminUser = await userManager.FindByNameAsync(options.Value.Defaults.AdminUserName);
       logger.LogWarning($"Default admin account created: result='{result}' id='{adminUser?.Id}'");
     }
     else
     {
-      logger.LogWarning($"User {options.Value.DefaultAdminUserName} already exists!");
+      logger.LogWarning($"User {options.Value.Defaults.AdminUserName} already exists!");
     }
 
     if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, options.Value.Roles.AdminRoleName))

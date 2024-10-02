@@ -21,45 +21,7 @@ public class UserController(
   IOptions<Options> identityOptions)
   : ControllerBase
 {
-  [HttpPost("/api/logout")]
-  [Authorize]
-  public async Task<IResult> Logout()
-  {
-    await signinManager.SignOutAsync();
-    return Results.Ok();
-  }
-  
-  [HttpGet("/api/pingauth")]
-  [Authorize]
-  public IResult GetCurrentUserInformation()
-  {
-    // This is used by the frontend to acquire information about the logged in user,
-    // that's stored inside the HTTP-only cookie in the browser and not accessible from JS
-    var email = User.FindFirstValue(ClaimTypes.Email);
-    return Results.Json(new { Email = email });
-  }
-
-  public record GetUserResponseDto(string Id, string? Email, string? Username, bool EmailConfirmed, List<string> Roles)
-  {
-    public override string ToString()
-    {
-      return $"{{ id = {Id}, email = {Email}, username = {Username}, emailConfirmed = {EmailConfirmed}, roles = {Roles} }}";
-    }
-  }
-
-  public record GetRolesResponseDto(string Id, string? Name)
-  {
-    public override string ToString()
-    {
-      return $"{{ id = {Id}, name = {Name} }}";
-    }
-  }
-
-  public record PutRoleForUserDto(string RoleId);
-
-  public record PutUserDto(string UserName, string Email, string[] Roles);
-
-  [HttpPut("/api/User/{userId}/role")]
+  [HttpPut("{userId}/role")]
   public async Task<IResult> SetRoleForUser([FromRoute] string userId, [FromBody] PutRoleForUserDto content)
   {
     var currentUserId = userManager.GetUserId(User);
@@ -83,7 +45,7 @@ public class UserController(
     return identityResult.Succeeded ? Results.Ok(identityResult) : Results.BadRequest(identityResult);
   }
   
-  [HttpPut("/api/User/{userId}")]
+  [HttpPut("{userId}")]
   public async Task<IResult> UpdateUser([FromRoute] string userId, [FromBody] PutUserDto content)
   {
     var currentUserId = userManager.GetUserId(User);
@@ -149,7 +111,7 @@ public class UserController(
     return result.Succeeded ? Results.Ok() : Results.NotFound(result);
   }
   
-  [HttpGet("/api/[controller]/Roles")]
+  [HttpGet("Roles")]
   public async Task<IResult> GetUserRoles()
   {
     var roles = await roleManager.Roles.ToListAsync();
