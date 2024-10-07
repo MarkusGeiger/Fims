@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fims", "Fims", "{D0FA8290-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fims.API", "Fims.API\Fims.API.csproj", "{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fims.API2", "Fims.API2\Fims.API2.csproj", "{09A3CE64-97CA-45CC-B912-D604675A8590}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{521DCF37-AEC5-4E0D-BF1D-44113DDBE424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09A3CE64-97CA-45CC-B912-D604675A8590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09A3CE64-97CA-45CC-B912-D604675A8590}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09A3CE64-97CA-45CC-B912-D604675A8590}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09A3CE64-97CA-45CC-B912-D604675A8590}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

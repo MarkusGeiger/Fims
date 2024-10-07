@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Fims.API2\Fims.API2.csproj" />
       <ProjectReference Include="..\Fims.API\Fims.API.csproj" />
       <ProjectReference Include="..\Fims.Server\Fims.Server.csproj" />
     </ItemGroup>
