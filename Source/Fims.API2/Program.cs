@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Security.Claims;
 using Fims.API2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,19 +42,19 @@ app.UseHttpsRedirection();
 
 app.MapDefaultEndpoints();
 
-app.MapGet("/", () => """
+app.MapGet("/", () => Results.Text("""
                       <html>
-                      <body>
+                      <body style="font-family:sans-serif;background-color:#363533;color:white;">
                       <h1>Fims API2</h1>
-                      <a href="https://youtu.be/Blrn5JyAl6E"></a>
-                      This tutorial shows how to use Keycloak with ASP .NET Core APIs.
-                      The authentication is done here with username and password.
-                      To obtain a valid token, the user has to send username and password to keycloak.
-                      Problem: No cookie is set, login has to be performed on each page load!
-                      Only way to persist the cookie is to use local/session storage => unsecure.
+                      <a target="_blank" rel="noopener noreferrer" href="https://youtu.be/Blrn5JyAl6E">Reference Tutorial (Youtube)</a>
+                      <p>This tutorial shows how to use Keycloak with ASP .NET Core APIs.</p>
+                      <p>The authentication is done here with username and password.</p>
+                      <p>To obtain a valid token, the user has to send username and password to keycloak.</p>
+                      <p>Problem: No cookie is set, login has to be performed on each page load!</p>
+                      <p>Only way to persist the cookie is to use local/session storage => unsecure.</p>
                       </body>
                       </html>
-                      """);
+                      """, "text/html"));
 
 var summaries = new[]
 {
