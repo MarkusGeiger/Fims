@@ -1,6 +1,32 @@
+using System.Security.Claims;
+using Fims.API3;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication("cookie")
+  .AddCookie("cookie")
+  .AddOAuth("keycloak", o =>
+  {
+    o.SignInScheme = "cookie";
+    o.ClientId = Secrets.ClientId;
+    o.ClientSecret = Secrets.ClientSecret;
+    o.SaveTokens = false;
+  });
+
+builder.Services.AddAuthorization(b =>
+{
+  b.AddPolicy("keycloak-enabled", pb =>
+  {
+    pb.AddAuthenticationSchemes("cookie")
+      .RequireClaim("kc-token", "y")
+      .RequireAuthenticatedUser();
+  });
+});
+
 builder.AddServiceDefaults();
+
+builder.Services.AddSingleton<Database>();
+builder.Services.AddHttpClient();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -19,6 +45,25 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapDefaultEndpoints();
+
+app.MapGet("/login", () => Results.SignIn(
+  new ClaimsPrincipal(
+    new ClaimsIdentity
+    (new[] { new Claim("user_id", Guid.NewGuid().ToString()) },
+      "cookie"
+    )
+  ),
+  authenticationScheme: "cookie"
+));
+
+app.MapGet("/kc/info", (IHttpClientFactory clientFactory, Database db, HttpContext ctx) =>
+{
+  var user = ctx.User;
+  var userId = user.FindFirstValue("user_id");
+  var accessToken = db[userId];
+  var client = clientFactory.CreateClient();
+
+}).RequireAuthorization("keycloak-enabled");
 
 app.MapGet("/", () => Results.Text("""
                                    <html>
@@ -56,4 +101,9 @@ app.Run();
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
   public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+
+class Database : Dictionary<string, object>
+{
+  
 }
