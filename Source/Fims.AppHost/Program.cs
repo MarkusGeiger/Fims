@@ -14,5 +14,7 @@ builder.AddProject<Projects.Fims_API2>("api2")
   .WithReference(keycloak)
   .WithReference(realm2);
 
+builder.AddProject<Projects.Fims_API3>("api3");
+
 builder.AddProject<Projects.Fims_Server>("backend");
 builder.Build().Run();

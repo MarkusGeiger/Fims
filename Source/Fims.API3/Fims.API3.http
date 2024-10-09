@@ -1,0 +1,6 @@
+@Fims.API3_HostAddress = http://localhost:5249
+
+GET {{Fims.API3_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
